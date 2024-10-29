@@ -42,6 +42,38 @@ app.get('/api/products/:productID',(req,res)=>{
     
 })
 
+app.get('/api/products/:productID/reviews/:reviewID',(req,res)=>{
+    console.log(req.params)
+    res.send('hello world')
+})
+
+
+//URL?<info that server will use>. For example localhost:5000/api/v1/search?tags=story&query=bar
+//?"tags" is a key then "story" is a value
+//these items are sent by the client to the server I guess an object of key-value pairs?
+
+app.get('/api/v1/query', (req,res)=>{
+    //console.log(req.query);
+    //they key-value pairs are stored in whatever is before that "?"
+    //in this case, they're stored in "query"
+    const {search,limit} = req.query //deconstruct and get the variables
+    let sortedProducts = [...products];
+
+    if(search){
+        sortedProducts = sortedProducts.filter((product)=>{
+            return product.name.startsWith(search)
+        })
+    }
+    if(limit){
+        sortedProducts = sortedProducts.slice(0,Number(limit))
+    }
+    if(sortedProducts.length <1){
+        //res.status(200).send("No product matched your search")
+        return res.status(200).json({success:true,data:[]})
+    }
+    res.status(200).json(sortedProducts)
+})
+
 app.listen(5000,()=>{
     console.log('server is listening on port 5000')
 })
